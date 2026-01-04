@@ -86,17 +86,21 @@
                                 alert('SUCCESS! Status 200\n\nResponse:\n' + JSON.stringify(data, null, 2));
                             });
                         } else {
-                            // Not 200 - send request again immediately
+                            // Not 200 - wait 1 second then send request again
                             document.getElementById('response').innerHTML = 
-                                'Status ' + response.status + ' - Sending request again...';
-                            sendRequest(); // Send again
+                                'Status ' + response.status + ' - Waiting 1 second then retrying...';
+                            
+                            // Wait 1 second (1000ms) before sending next request
+                            setTimeout(sendRequest, 1000);
                         }
                     })
                     .catch(error => {
-                        // Error - send request again immediately
+                        // Error - wait 1 second then send request again
                         document.getElementById('response').innerHTML = 
-                            'Error - Sending request again...';
-                        sendRequest(); // Send again
+                            'Error - Waiting 1 second then retrying...';
+                        
+                        // Wait 1 second (1000ms) before sending next request
+                        setTimeout(sendRequest, 1000);
                     });
                 }
                 
