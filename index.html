@@ -88,7 +88,7 @@
                         } else {
                             // Not 200 - wait 1 second then send request again
                             document.getElementById('response').innerHTML = 
-                                'Status ' + response.status + ' - Waiting 1 second then retrying...';
+                                'Status ' + response.status + ' - retrying...';
                             
                             // Wait 1 second (1000ms) before sending next request
                             setTimeout(sendRequest, 1000);
