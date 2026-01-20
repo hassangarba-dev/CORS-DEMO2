@@ -12,7 +12,7 @@
       document.onclick = () => {
         open('https://www.myfitnesspal.com/');
 
-        fetch('https://www.myfitnesspal.com/api/services/users/', {
+        fetch('https://www.myfitnesspal.com/api/auth/session/', {
           method: 'GET',
           credentials: 'include',
           mode: 'cors'
