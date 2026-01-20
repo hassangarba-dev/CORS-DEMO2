@@ -39,9 +39,7 @@
                         }
                     }
                 };
-                
-                // Note: This will likely fail due to CORS policy
-                // unless myfitnesspal.com has permissive CORS headers
+
                 xhttp.open("GET", "https://www.myfitnesspal.com/api/services/users", true);
                 xhttp.withCredentials = true;
                 xhttp.send();
