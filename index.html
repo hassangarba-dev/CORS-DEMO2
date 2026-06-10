@@ -6,19 +6,15 @@ fetch('https://sitebuilder.xsolla.com/api/session', {
     mode: 'cors'
 })
 .then(response => {
-    // Log the full response object to the console
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-    
     // Try to read the response body as text
     return response.text();
 })
 .then(data => {
-    // Log the actual response data to the console
-    console.log('Response data:', data);
+    // Show the response data in an alert popup
+    alert('Response data: ' + data);
 })
 .catch(err => {
-    // Log any errors to the console
-    console.error('Error:', err);
+    // Show the error in an alert popup
+    alert('Error: ' + err.message);
 });
 </script>
